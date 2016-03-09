@@ -5,7 +5,7 @@ using Photon;
 
 public class boxerScript : Photon.MonoBehaviour {
 
-    public float moveSpeed = 0.6f;
+    public float moveSpeed = 50f;//0.6f;
     private Animator boxerAnimator;
 
     private bool punching = false;
@@ -24,6 +24,8 @@ public class boxerScript : Photon.MonoBehaviour {
     private Vector3 correctPlayerPos;
     private Vector3 correctPlayerRot;
 
+    private Rigidbody boxerRb;
+
     public bool Punching
     {
         get { return punching; }
@@ -32,6 +34,7 @@ public class boxerScript : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         boxerAnimator = gameObject.GetComponent<Animator>();
+        boxerRb = gameObject.GetComponent<Rigidbody>();
         //lifeBarDissolve = lifeBar.GetComponent<SpriteRenderer>().material;
 	}
 
@@ -62,7 +65,8 @@ public class boxerScript : Photon.MonoBehaviour {
 
             if (!punch && !punching)
             {
-                gameObject.transform.Translate(new Vector3(xMove, 0, yMove) * invert * moveSpeed);
+                //gameObject.transform.Translate(new Vector3(xMove, 0, yMove) * invert * moveSpeed);
+                boxerRb.AddForce(new Vector3(xMove, 0, yMove) * invert * moveSpeed, ForceMode.Acceleration);
             }
 
 
@@ -100,7 +104,7 @@ public class boxerScript : Photon.MonoBehaviour {
 
     private void DoLeftJab(bool doJab)
     {
-        leftJab = true;
+        leftJab = doJab;
         boxerAnimator.SetBool("LeftJab", doJab);
     }
 
@@ -117,8 +121,8 @@ public class boxerScript : Photon.MonoBehaviour {
 
     public void DoneLeftJab()
     {
-        boxerAnimator.SetBool("LeftJab", false);
         leftJab = false;
+        boxerAnimator.SetBool("LeftJab", false);
     }
 
     public void DoneUpperCut()
