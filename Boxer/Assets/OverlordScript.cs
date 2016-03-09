@@ -48,6 +48,7 @@ public class OverlordScript : MonoBehaviour {
             boxerScript b1 = boxer1.GetComponent<boxerScript>();
             b1.controlNumStart = 0;
             b1.lifeBar = leftBar;
+            p1Playing = true;
         }
         if (playerTwoStart && !p2Playing)
         {
@@ -58,11 +59,13 @@ public class OverlordScript : MonoBehaviour {
             boxerScript b2 = boxer2.GetComponent<boxerScript>();
             b2.controlNumStart = 4;
             b2.lifeBar = rightBar;
-            PhotonNetwork.offlineMode = true;
+            p2Playing = true;
+            PhotonNetwork.Disconnect();
         }
 
         if (playerOneConnect && !p1Playing && !p2Playing)//only allow a connection if p2 hasn't started playing
         {
+            
             online = true;
             //try to join game
             PhotonNetwork.JoinOrCreateRoom("BoxingGame", new RoomOptions() { isOpen = true, isVisible = true, maxPlayers = 2 }, TypedLobby.Default);
@@ -89,6 +92,11 @@ public class OverlordScript : MonoBehaviour {
                 }
             }
         }
+    }
+
+    void OnDisconnectedFromPhoton()
+    {
+        PhotonNetwork.offlineMode = true;
     }
 
     public void ReloadScene()
@@ -124,10 +132,5 @@ public class OverlordScript : MonoBehaviour {
             //boxer1.GetComponent<boxerScript>().lifeBar = leftBar;
             //b2.lifeBar = rightBar;
         }
-    }
-
-    void OnPhotonInstantiate(PhotonMessageInfo info)
-    {
-        
     }
 }
