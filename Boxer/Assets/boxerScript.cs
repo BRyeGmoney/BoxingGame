@@ -25,6 +25,8 @@ public class boxerScript : Photon.MonoBehaviour {
     private Vector3 correctPlayerRot;
 
     private Rigidbody boxerRb;
+    public float maxVelocity;
+    private float sqrMaxVel;
 
     public bool Punching
     {
@@ -35,6 +37,7 @@ public class boxerScript : Photon.MonoBehaviour {
 	void Start () {
         boxerAnimator = gameObject.GetComponent<Animator>();
         boxerRb = gameObject.GetComponent<Rigidbody>();
+        sqrMaxVel = maxVelocity * maxVelocity;
         //lifeBarDissolve = lifeBar.GetComponent<SpriteRenderer>().material;
 	}
 
@@ -66,7 +69,7 @@ public class boxerScript : Photon.MonoBehaviour {
             if (!punch && !punching)
             {
                 //gameObject.transform.Translate(new Vector3(xMove, 0, yMove) * invert * moveSpeed);
-                boxerRb.AddForce(new Vector3(xMove, 0, yMove) * invert * moveSpeed, ForceMode.Acceleration);
+                boxerRb.AddForce(new Vector3(xMove * moveSpeed, 0, yMove * moveSpeed) * invert, ForceMode.Force);
             }
 
 
@@ -95,6 +98,19 @@ public class boxerScript : Photon.MonoBehaviour {
         if (BoxerHealth <= 0)
             OverlordScript.instance.ReloadScene();
 	}
+
+    void FixedUpdate()
+    {
+        Vector3 vel = boxerRb.velocity;
+        //clamp velocity
+        if (vel.sqrMagnitude > sqrMaxVel) //equivalent to vel.mag > maxVel, but faster this way
+        {
+            //vector3.normalized returns this vector with a magnitude
+            //of 1. This ensures that we're not messing with the 
+            //direction of the vector, only its magnitude
+            boxerRb.velocity = vel.normalized * maxVelocity;
+        }
+    }
 
     private void DoRightJab()
     {

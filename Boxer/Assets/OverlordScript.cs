@@ -71,7 +71,7 @@ public class OverlordScript : MonoBehaviour {
             PhotonNetwork.JoinOrCreateRoom("BoxingGame", new RoomOptions() { isOpen = true, isVisible = true, maxPlayers = 2 }, TypedLobby.Default);
         }
 
-        if (online && !boxer1 || !boxer2)
+        if (online && (!boxer1 || !boxer2))
         {
             if (!boxer1)
             {
