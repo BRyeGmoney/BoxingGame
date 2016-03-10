@@ -8,6 +8,7 @@ public class boxerScript : Photon.MonoBehaviour {
     public float moveSpeed = 50f;//0.6f;
     private Animator boxerAnimator;
 
+    private bool lastPunchLanded;
     private bool punching = false;
     private bool rightJab = false;
     private bool leftJab = false;
@@ -145,6 +146,11 @@ public class boxerScript : Photon.MonoBehaviour {
     public void DoneUpperCut()
     {
         uCut = false;
+    }
+
+    public void LandedPunch()
+    {
+        lastPunchLanded = true;
     }
 
     [PunRPC]

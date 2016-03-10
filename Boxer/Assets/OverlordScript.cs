@@ -65,7 +65,6 @@ public class OverlordScript : MonoBehaviour {
 
             foreach (GameObject textObj in startTexts)
             {
-                //TextMesh pressStart = textObj.GetComponent<TextMesh>();
                 textObj.SetActive(false);
             }
         }

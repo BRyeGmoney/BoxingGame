@@ -18,27 +18,29 @@ public class PunchColliderScript : MonoBehaviour {
 
     private void DealWithHit(Collider col)
     {
-        if (gameObject.transform.parent.gameObject.GetComponent<boxerScript>().Punching)
+        boxerScript hittingBoxer = gameObject.transform.parent.gameObject.GetComponent<boxerScript>();
+        if (hittingBoxer.Punching)
         {
-            Vector3 punchDir = (col.transform.position - gameObject.transform.position).normalized;//new Vector3();
+            //new Vector3();
+            int damageDealt = 0;
+
             //Debug.Log(string.Format("Type: {0}, Def: {1}, Atacking: {2}", col.name, col.transform.parent.gameObject.name, gameObject.transform.parent.gameObject.name));
             if (col.name == "HeadCollision")
-            {
-                boxerScript boxer = col.transform.parent.gameObject.GetComponent<boxerScript>();
-
-                if (PhotonNetwork.offlineMode)
-                    boxer.GetHit(HEAD_PUNCH, punchDir);
-                else
-                    boxer.GetComponent<PhotonView>().RPC("GetHit", PhotonTargets.All, HEAD_PUNCH, punchDir, col.transform.parent.gameObject.GetComponent<PhotonView>().owner.ID);
-            }
+                damageDealt = HEAD_PUNCH;
             else if (col.name == "BodyCollision")
+                damageDealt = BODY_PUNCH;
+
+            if (damageDealt > 0)
             {
-                boxerScript boxer = col.transform.parent.gameObject.GetComponent<boxerScript>();
+                boxerScript boxerGettingHit = col.transform.parent.gameObject.GetComponent<boxerScript>();
+                Vector3 punchDir = (col.transform.position - gameObject.transform.parent.position).normalized;
 
                 if (PhotonNetwork.offlineMode)
-                    boxer.GetHit(BODY_PUNCH, punchDir);
+                    boxerGettingHit.GetHit(damageDealt, punchDir);
                 else
-                    boxer.GetComponent<PhotonView>().RPC("GetHit", PhotonTargets.All, BODY_PUNCH, punchDir, col.transform.parent.gameObject.GetComponent<PhotonView>().owner.ID);
+                    boxerGettingHit.GetComponent<PhotonView>().RPC("GetHit", PhotonTargets.All, damageDealt, punchDir, col.transform.parent.gameObject.GetComponent<PhotonView>().owner.ID);
+
+                hittingBoxer.LandedPunch();
             }
         }
     }
