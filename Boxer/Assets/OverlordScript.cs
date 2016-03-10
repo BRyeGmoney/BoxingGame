@@ -18,6 +18,8 @@ public class OverlordScript : MonoBehaviour {
     public GameObject startTextLeft;
     public GameObject startTextRight;
 
+    public GameState currentGameState = GameState.StartScreen;
+
     public bool online = false;
 
     private bool p1Playing = false;
@@ -33,6 +35,12 @@ public class OverlordScript : MonoBehaviour {
 
         instance = this;
     }
+
+    void Awake()
+    {
+        TextMesh pressStart = GameObject.Find("PressStart").GetComponent<TextMesh>();
+        DOTween.ToAlpha(() => pressStart.color, x => pressStart.color = x, 0, 1).SetLoops(-1, LoopType.Yoyo);
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -40,6 +48,31 @@ public class OverlordScript : MonoBehaviour {
         bool playerTwoStart = Input.GetButtonDown("Submit2");
         bool playerOneConnect = Input.GetButtonDown("Connect");
 
+        if (currentGameState.Equals(GameState.StartScreen))
+            UpdateStartScreenState(playerOneStart);
+        else if (currentGameState.Equals(GameState.GameScreen))
+            UpdateGameState(playerOneStart, playerTwoStart, playerOneConnect);
+    }
+
+    private void UpdateStartScreenState(bool playerOneStart)
+    {
+        if (playerOneStart)
+        {
+            Camera.main.gameObject.GetComponent<Animator>().SetTrigger("StartGame");
+            currentGameState = GameState.StartToGameAnim;
+
+            GameObject[] startTexts = GameObject.FindGameObjectsWithTag("StartScreenText");
+
+            foreach (GameObject textObj in startTexts)
+            {
+                //TextMesh pressStart = textObj.GetComponent<TextMesh>();
+                textObj.SetActive(false);
+            }
+        }
+    }
+
+    private void UpdateGameState(bool playerOneStart, bool playerTwoStart, bool playerOneConnect)
+    {
         if (playerOneStart && !p1Playing)
         {
             startTextLeft.SetActive(false);
@@ -53,7 +86,7 @@ public class OverlordScript : MonoBehaviour {
         if (playerTwoStart && !p2Playing)
         {
             startTextRight.SetActive(false);
-            
+
             boxer2 = (GameObject)Instantiate(boxerObject, new Vector3(3.33f, 3.55f, 1.48f), Quaternion.identity);
             boxer2.transform.localEulerAngles = new Vector3(0f, -180f, 0f);
             boxerScript b2 = boxer2.GetComponent<boxerScript>();
@@ -65,7 +98,7 @@ public class OverlordScript : MonoBehaviour {
 
         if (playerOneConnect && !p1Playing && !p2Playing)//only allow a connection if p2 hasn't started playing
         {
-            
+
             online = true;
             //try to join game
             PhotonNetwork.JoinOrCreateRoom("BoxingGame", new RoomOptions() { isOpen = true, isVisible = true, maxPlayers = 2 }, TypedLobby.Default);
@@ -133,4 +166,11 @@ public class OverlordScript : MonoBehaviour {
             //b2.lifeBar = rightBar;
         }
     }
+}
+
+public enum GameState
+{
+    StartScreen,
+    StartToGameAnim,
+    GameScreen
 }

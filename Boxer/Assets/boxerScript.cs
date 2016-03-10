@@ -157,6 +157,7 @@ public class boxerScript : Photon.MonoBehaviour {
             BoxerHealth -= damage * DamageMod;
 
             lifeBar.BarProgress = BoxerHealth / 100f;
+            boxerRb.AddForce(new Vector3(punchDir.x, 1, 0), ForceMode.Impulse);
             //lifeBarDissolve.SetFloat(BeautifulDissolves.DissolveHelper.dissolveAmountID, 1f - (BoxerHealth / 140f));
             //Debug.Log(BoxerHealth + ", " + (1f - (BoxerHealth / 140f)));
         }
@@ -172,8 +173,7 @@ public class boxerScript : Photon.MonoBehaviour {
             BoxerHealth -= damage * DamageMod;
 
             lifeBar.BarProgress = BoxerHealth / 100f;
-
-            boxerRb.AddForce(punchDir * 50, ForceMode.Force);
+            boxerRb.AddForce(new Vector3(punchDir.x, 1, 0), ForceMode.Impulse);
             //lifeBarDissolve.SetFloat(BeautifulDissolves.DissolveHelper.dissolveAmountID, 1f - (BoxerHealth / 140f));
             //Debug.Log(BoxerHealth + ", " + (1f - (BoxerHealth / 140f)));
         }
