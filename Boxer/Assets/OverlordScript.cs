@@ -78,8 +78,7 @@ public class OverlordScript : MonoBehaviour {
 
             boxer1 = (GameObject)Instantiate(boxerObject, new Vector3(-0.89f, 3.55f, 1.48f), Quaternion.identity);
             boxerScript b1 = boxer1.GetComponent<boxerScript>();
-            b1.controlNumStart = 0;
-            b1.lifeBar = leftBar;
+            b1.SetPlayerNum(1);
             p1Playing = true;
         }
         if (playerTwoStart && !p2Playing)
@@ -89,9 +88,9 @@ public class OverlordScript : MonoBehaviour {
             boxer2 = (GameObject)Instantiate(boxerObject, new Vector3(3.33f, 3.55f, 1.48f), Quaternion.identity);
             boxer2.transform.localEulerAngles = new Vector3(0f, -180f, 0f);
             boxerScript b2 = boxer2.GetComponent<boxerScript>();
-            b2.controlNumStart = 4;
-            b2.lifeBar = rightBar;
+            b2.SetPlayerNum(2);
             p2Playing = true;
+
             PhotonNetwork.Disconnect();
         }
 
@@ -147,9 +146,9 @@ public class OverlordScript : MonoBehaviour {
         {
             boxer1 = PhotonNetwork.Instantiate("Boxer", new Vector3(-0.89f, 3.55f, 1.48f), Quaternion.identity, 0);
             boxerScript b1 = boxer1.GetComponent<boxerScript>();
-            b1.controlNumStart = 0;
-            b1.lifeBar = leftBar;
-            b1.SetPlayerNum(0);
+            //b1.controlNumStart = 0;
+            //b1.lifeBar = leftBar;
+            b1.SetPlayerNum(1);
         }
         else
         {
@@ -158,7 +157,7 @@ public class OverlordScript : MonoBehaviour {
             //boxer1.GetComponent<boxerScript>().lifeBar = leftBar;
             //boxer2.GetComponent<SpriteRenderer>().flipX = true;
             boxerScript b2 = boxer2.GetComponent<boxerScript>();
-            b2.SetPlayerNum(1);
+            b2.SetPlayerNum(2);
             //b2.invert = -1;
             //b2.controlNumStart = 0;
             //boxer1.GetComponent<boxerScript>().lifeBar = leftBar;

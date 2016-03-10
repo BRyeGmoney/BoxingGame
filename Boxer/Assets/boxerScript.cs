@@ -20,6 +20,7 @@ public class boxerScript : Photon.MonoBehaviour {
     public float DamageMod = 1f;
 
     public _2dxFX_EnergyBar lifeBar;
+    public ParticleSystem blood;
     public int invert = 1;
 
     private Vector3 correctPlayerPos;
@@ -44,10 +45,16 @@ public class boxerScript : Photon.MonoBehaviour {
 
     public void SetPlayerNum(int pNum)
     {
-        if (pNum == 0)
+        if (pNum == 1)
+        {
             lifeBar = OverlordScript.instance.leftBar;
+            controlNumStart = 0;
+        }
         else
+        { 
             lifeBar = OverlordScript.instance.rightBar;
+            controlNumStart = 4;
+        }
     }
 	
 	// Update is called once per frame
@@ -91,6 +98,12 @@ public class boxerScript : Photon.MonoBehaviour {
         if (BoxerHealth <= 0)
             OverlordScript.instance.ReloadScene();
 	}
+
+    private void ShootBlood()
+    {
+        //blood.Stop();
+        blood.Play();
+    }
 
     void FixedUpdate()
     {
@@ -180,6 +193,7 @@ public class boxerScript : Photon.MonoBehaviour {
 
             lifeBar.BarProgress = BoxerHealth / 100f;
             boxerRb.AddForce(new Vector3(punchDir.x, 1, 0), ForceMode.Impulse);
+            ShootBlood();
             //lifeBarDissolve.SetFloat(BeautifulDissolves.DissolveHelper.dissolveAmountID, 1f - (BoxerHealth / 140f));
             //Debug.Log(BoxerHealth + ", " + (1f - (BoxerHealth / 140f)));
         }
