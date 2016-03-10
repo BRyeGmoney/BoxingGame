@@ -59,19 +59,11 @@ public class boxerScript : Photon.MonoBehaviour {
 
         if (controlNumStart > -1)
         {
-            float xMove = Input.GetAxis(((Controls)controlNumStart).ToString()); //"Horizontal" + playerNum);
-            float yMove = Input.GetAxis(((Controls)controlNumStart + 1).ToString());//"Vertical" + playerNum);
+            
             bool punch = Input.GetButtonDown(((Controls)controlNumStart + 2).ToString());//"Punch" + playerNum);
             bool upCut = Input.GetButtonDown(((Controls)controlNumStart + 3).ToString());//"UpCut" + playerNum);
 
-            punching = rightJab || leftJab || uCut;
-
-            if (!punch && !punching)
-            {
-                //gameObject.transform.Translate(new Vector3(xMove, 0, yMove) * invert * moveSpeed);
-                boxerRb.AddForce(new Vector3(xMove * moveSpeed, 0, yMove * moveSpeed) * invert, ForceMode.Force);
-            }
-
+            punching = punch || rightJab || leftJab || uCut;
 
             if (punch && !isHit)
             {
@@ -101,7 +93,10 @@ public class boxerScript : Photon.MonoBehaviour {
 
     void FixedUpdate()
     {
+        float xMove = Input.GetAxis(((Controls)controlNumStart).ToString()); //"Horizontal" + playerNum);
+        float yMove = Input.GetAxis(((Controls)controlNumStart + 1).ToString());//"Vertical" + playerNum);
         Vector3 vel = boxerRb.velocity;
+
         //clamp velocity
         if (vel.sqrMagnitude > sqrMaxVel) //equivalent to vel.mag > maxVel, but faster this way
         {
@@ -109,6 +104,12 @@ public class boxerScript : Photon.MonoBehaviour {
             //of 1. This ensures that we're not messing with the 
             //direction of the vector, only its magnitude
             boxerRb.velocity = vel.normalized * maxVelocity;
+        }
+
+        if (!punching)
+        {
+            //gameObject.transform.Translate(new Vector3(xMove, 0, yMove) * invert * moveSpeed);
+            boxerRb.AddForce(new Vector3(xMove * moveSpeed, 0, yMove * moveSpeed) * invert, ForceMode.Force);
         }
     }
 
@@ -147,7 +148,7 @@ public class boxerScript : Photon.MonoBehaviour {
     }
 
     [PunRPC]
-    public void GetHit(int damage, int playerID)
+    public void GetHit(int damage, Vector3 punchDir, int playerID)
     {
         if (!isHit)
         {
@@ -162,7 +163,7 @@ public class boxerScript : Photon.MonoBehaviour {
     }
 
 
-    public void GetHit(int damage)
+    public void GetHit(int damage, Vector3 punchDir)
     {
         if (!isHit)
         {
@@ -171,6 +172,8 @@ public class boxerScript : Photon.MonoBehaviour {
             BoxerHealth -= damage * DamageMod;
 
             lifeBar.BarProgress = BoxerHealth / 100f;
+
+            boxerRb.AddForce(punchDir * 50, ForceMode.Force);
             //lifeBarDissolve.SetFloat(BeautifulDissolves.DissolveHelper.dissolveAmountID, 1f - (BoxerHealth / 140f));
             //Debug.Log(BoxerHealth + ", " + (1f - (BoxerHealth / 140f)));
         }
